@@ -26,31 +26,19 @@ export function SubscriptionStatus({ subscription }: SubscriptionStatusProps) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   
-  const handleManageSubscription = async () => {
+  async function handleManageSubscription() {
     setIsLoading(true);
     
     try {
-      const response = await fetch('/api/stripe/portal', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok && data.url) {
-        window.location.href = data.url;
-      } else {
-        toast.error("Could not access billing portal");
-      }
-    } catch (error) {
-      console.error('Error accessing billing portal:', error);
-      toast.error("Failed to open billing portal");
+      // Instead of redirecting to the Stripe portal, let's show the plans tab
+      router.push("/settings?tab=plans");
+    } catch (error: any) {
+      console.error('Error:', error);
+      toast.error('Something went wrong. Please try again.');
     } finally {
       setIsLoading(false);
     }
-  };
+  }
   
   const handleUpgrade = () => {
     router.push("/pricing");

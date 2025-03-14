@@ -7,6 +7,7 @@ import { DocumentEditor } from "@/components/notes/document-editor";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { DeleteNoteButton } from "@/components/notes/delete-note-button";
+import ShareButton from '@/components/ShareButton';
 
 export default async function NotePage({ params }: { params: { id: string } }) {
   const { userId } = await auth();
@@ -60,6 +61,11 @@ export default async function NotePage({ params }: { params: { id: string } }) {
       </nav>
       
       <main className="flex-1 container py-6 max-w-4xl mx-auto">
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <ShareButton noteId={params.id} initialShareId={note.share_id} />
+          </div>
+        </div>
         <DocumentEditor note={note} />
       </main>
     </div>

@@ -7,13 +7,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserProfile } from "@clerk/nextjs";
 import { UpgradeButton } from "../subscription/upgrade-button";
+import { ManagePlan } from "../subscription/manage-plan"; 
+import { useEffect, useState } from "react";
 
 interface AccountSettingsProps {
   subscription: Subscription | null;
+  defaultTab?: string;
 }
 
-export function AccountSettings({ subscription }: AccountSettingsProps) {
+export function AccountSettings({ subscription, defaultTab = "subscription" }: AccountSettingsProps) {
   const { user } = useUser();
+  const [activeTab, setActiveTab] = useState(defaultTab);
+  
+  // Update the active tab when the defaultTab prop changes
+  useEffect(() => {
+    if (defaultTab) {
+      setActiveTab(defaultTab);
+    }
+  }, [defaultTab]);
   
   if (!user) return null;
   
@@ -32,9 +43,10 @@ export function AccountSettings({ subscription }: AccountSettingsProps) {
         )}
       </div>
       
-      <Tabs defaultValue="subscription">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-6">
           <TabsTrigger value="subscription">Subscription</TabsTrigger>
+          <TabsTrigger value="plans">Plans</TabsTrigger>
           <TabsTrigger value="profile">Profile</TabsTrigger>
         </TabsList>
         
@@ -61,9 +73,13 @@ export function AccountSettings({ subscription }: AccountSettingsProps) {
           </div>
         </TabsContent>
         
+        <TabsContent value="plans">
+          <ManagePlan subscription={subscription} />
+        </TabsContent>
+        
         <TabsContent value="profile">
           <div className="rounded-md border">
-            <UserProfile />
+            <UserProfile routing="path" path="/settings" />
           </div>
         </TabsContent>
       </Tabs>
